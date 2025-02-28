@@ -1,0 +1,46 @@
+apply plugin: 'java-library'
+apply plugin: 'net.serenity-bdd.aggregator'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "net.serenity-bdd:serenity-gradle-plugin:${gradlePlugin}"
+    }
+}
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+dependencies {
+    implementation "net.serenity-bdd:serenity-core:${serenityCoreVersion}"
+    implementation "net.serenity-bdd:serenity-junit:${serenityCoreVersion}"
+    implementation "net.serenity-bdd:serenity-screenplay:${serenityCoreVersion}"
+    implementation "net.serenity-bdd:serenity-cucumber:${serenityCoreVersion}"
+    implementation "org.assertj:assertj-core:${serenityCoreVersion}"
+    implementation "org.apache.poi:poi:${poi}"
+    implementation "org.apache.poi:poi-ooxml:${poi}"
+    implementation "org.slf4j:slf4j-simple:${slf4jVersion}"
+    implementation "net.serenity-bdd:serenity-ensure:${Ensure}"
+    implementation "org.slf4j:slf4j-nop:${slf4}"
+    testImplementation("io.github.bonigarcia:webdrivermanager:${bonigarcia}")
+
+}
+
+
+test {
+    useJUnit {
+        include "**/*";
+        gradle.startParameter.continueOnFailure = true
+        testLogging.showStandardStreams = true
+        systemProperties System.getProperties()
+        systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+    }
+    finalizedBy 'aggregate'
+}
